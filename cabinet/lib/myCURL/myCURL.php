@@ -1471,51 +1471,116 @@ function my_get_charset_from_file_regex($file, $file_info) {
     return $result;
 }
 
-function my_curl_download_all($parent_id, $start_id, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' || 'algorithm' */, $dir_structura, $filename_structura) {
+function my_curl_download_all($parent_id, $start_id, $own_url, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' || 'algorithm' */, $dir_structura, $filename_structura) {
     
     $download = 0;
+    
+    $where['id'] = $start_id;
+    $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
     
     if (($method === 'one_dir')
      || ($method === 'one_link')
      || ($method === 'all_from_one_link')
      || ($method === 'algorithm')) {
         
-        if ((int)$parent_id === (int)$start_id) {
-            $download = 1;
-        }
-        elseif ($method === 'all_from_one_link') {
-            $where['id'] = $parent_id;
-            echo '<pre>';
-            print_r($where);
-            echo '<pre>';
-            $parent_parent_id = my_read_cell_where_file_structura($where, 'parent', $dir_structura, $filename_structura);
-            echo $parent_parent_id;
-            if ((int)$parent_parent_id === (int)$start_id) $download = 1;
-        }
-        elseif ($method === 'one_dir') {
-/* ТРЕБУЕТ РЕДАКЦИИ -- ВРЕМЕННОЕ РЕШЕНИЕ */
-            $download = 1;
+        if ((int)$parent_id === (int)$start_id) $download = 1;
+        
+        if ($download !== 1) {
+            
+            if ($method === 'all_from_one_link') {
+                $where['id'] = $parent_id;
+                $parent_parent_id = my_read_cell_where_file_structura($where, 'parent', $dir_structura, $filename_structura);
+                
+                if ((int)$parent_parent_id === (int)$start_id) $download = 1;
+            }
+            elseif ($method === 'one_dir') {
+                
+                $where['id'] = $start_id;
+                $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                
+                $where['id'] = $parent_id;
+                $parent_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                
+                if (mb_substr($start_url, -1) === '/') $start_url = mb_substr($start_url, 0, -1);
+                
+                if (!preg_match('{^([^/]*//)?[^/]+$}', $start_url) && !preg_match('{/[^/\\.]+$}', $start_url)) $start_url = preg_replace('{/[^/]+$}', '', $start_url);
+                
+                if ((mb_stripos($own_url, $start_url) !== false) || (mb_stripos($parent_url, $start_url) !== false)) $download = 1;
+            }
         }
     }
     
     return $download;
 }
 
-function my_curl_download_SGML($structura_file, $parent_id, $start_id, $method = 'one_dir' /* 'one_link' || 'all_from_one_link' || 'algorithm' */) {
+function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML /* true || false */, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' || 'algorithm' */, $dir_structura, $filename_structura) {
     
-    $download = 0;
+    $download = 1;
     
     if (($method === 'one_dir')
      || ($method === 'one_link')
      || ($method === 'all_from_one_link')
      || ($method === 'algorithm')) {
         
-        if ($method === 'one_link') {
-            if ($parent_id === $start_id) $download = 1;
-        }
-        elseif ($method === 'all_from_one_link') {
+        if ($only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) $download = 0;
+        
+        if ($download === 1) {
             
+            if ((int)$own_id !== (int)$start_id) {
+                
+                $download = 0;
+                
+                $where['id'] = $own_id;
+                $parent_id = my_read_cell_where_file_structura($where, 'parent', $dir_structura, $filename_structura);
+                
+                if ($method === 'one_link') {
+                    if (!$only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) {
+                        if ((int)$parent_id === (int)$start_id) $download = 1;
+                    }
+                }
+                elseif ($method === 'all_from_one_link') {
+                    
+                    if ((int)$parent_id === (int)$start_id) $download = 1;
+                    
+                    if ($download !== 1) {
+                        if (!$only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) {
+                            
+                            $where['id'] = $parent_id;
+                            $parent_parent_id = my_read_cell_where_file_structura($where, 'parent', $dir_structura, $filename_structura);
+                            
+                            if ((int)$parent_parent_id === (int)$start_id) $download = 1;
+                        }
+                    }
+                }
+                elseif ($method === 'one_dir') {
+                    
+                    $where['id'] = $start_id;
+                    $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                    
+                    $where['id'] = $own_id;
+                    $own_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                    
+                    if (mb_substr($start_url, -1) === '/') $start_url = mb_substr($start_url, 0, -1);
+                    
+                    if (!preg_match('{^([^/]*//)?[^/]+$}', $start_url) && !preg_match('{/[^/\\.]+$}', $start_url)) $start_url = preg_replace('{/[^/]+$}', '', $start_url);
+                    
+                    if (mb_stripos($own_url, $start_url) !== false) $download = 1;
+                    
+                    if ($download !== 1) {
+                        if (!$only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) {
+                            
+                            $where['id'] = $parent_id;
+                            $parent_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                            
+                            if (mb_stripos($parent_url, $start_url) !== false) $download = 1;
+                        }
+                    }
+                }
+            }
         }
+    }
+    else {
+        $download = 0;
     }
     
     return $download;
@@ -1632,8 +1697,7 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                 
                                 if ($task['download']) {
                                     
-                                    if ($only_SGML && ($task['content_type'] !== 'text/html') && ($task['content_type'] !== 'text/xml')) $data_rewrite[0]['download'] = 0;
-                                    if ($data_rewrite[0]['download'] && ($task['id'] > 1) && ($method === 'one_link') && (($task['content_type'] === 'text/html') || ($task['content_type'] === 'text/xml'))) $data_rewrite[0]['download'] = 0;
+                                    $data_rewrite[0]['download'] = my_curl_download_SGML($task['id'], $start_id, $task['content_type'], $only_SGML, $method, $base_dirs['base_dir'], $structura_filename);
                                     
                                     if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) {
                                         
@@ -1764,7 +1828,7 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                         $level = $task['level'] + 1;
                                                         $parent_id = $task['id'];
                                                         
-                                                        $download = my_curl_download_all($parent_id, $start_id, $method, $base_dirs['base_dir'], $structura_filename);
+                                                        $download = my_curl_download_all($parent_id, $start_id, $url, $method, $base_dirs['base_dir'], $structura_filename);
                                                         
                                                         $data_write[ ] = array('id' => $id, 'level' => $level, 'parent' => $parent_id, 'url' => $url, 'download' => $download, 'anchor' => $anchor, 'done' => 0);
                                                     }

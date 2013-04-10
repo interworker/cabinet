@@ -483,7 +483,15 @@ function my_get_urls_2($file, $content_type, $parent_url, $base_url) {
         }
     }
     elseif ($content_type === 'text/css') {
+        
         $page = file_get_contents($file);
+        $page = my_string_in_line($page);
+        
+        $pattern_comments = '{(?=/\\*).*(?<=\\*/)}';
+        $replace_comments = '';
+        
+        if (preg_match($pattern_comments, $page)) $page = preg_replace($pattern_comments, $replace_comments, $page);
+        
         $pattern_import_css = '{@import[^;]+?"([^"]+)"}im';
         if (preg_match_all($pattern_import_css, $page, $matches)) {
             if (count($matches[1])) {

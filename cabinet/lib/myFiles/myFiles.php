@@ -941,17 +941,18 @@ function my_read_col_file_structura($name_of_col, $dir = '', $filename = 'struct
 }
 
 function my_read_row_where_file_structura($where, $dir = '', $filename = 'structura.txt') {
-/* Поменять параметр $num_or_name_col на $name_of_col */
+    
     $result = array ( );
     
     if (is_array($where) && (count($where) === 1)) {
         
         $where_key = array_flip($where);
-        $num_or_name_col = array_shift($where_key);
+        $name_of_col = array_shift($where_key);
         
         $val = array_shift($where);
+        $val = (string)$val;
         
-        $col = my_read_col_file_structura($num_or_name_col, $dir, $filename);
+        $col = my_read_col_file_structura($name_of_col, $dir, $filename);
         
         $check_where = array_keys($col, $val, TRUE);
         
@@ -964,37 +965,16 @@ function my_read_row_where_file_structura($where, $dir = '', $filename = 'struct
                 $file_structura = my_file($filename, $dir);
                 $lines = my_file_to_array($file_structura, FALSE);
                 
-                $pattern_decimal = '{^\d+$}';
-                if (preg_match($pattern_decimal, $num_or_name_col)) {
-                    if (array_search($num_or_name_col, $structura)) {
-                        foreach ($lines as $line) {
-                            if (mb_substr($line, 0, 2) !== "-\t") {
-                                $elements = explode("\t", $line);
-                                if ($elements[$num_or_name_col] === $val) {
-                                    if (count($elements) === count($structura)) {
-                                        $i = 0;
-                                        foreach ($structura as $key => $value) {
-                                            if ($i === $value) $result[$key] = $elements[$i];
-                                            $i++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (isset($structura[$num_or_name_col])) {
-                        foreach ($lines as $line) {
-                            if (mb_substr($line, 0, 2) !== "-\t") {
-                                $elements = explode("\t", $line);
-                                if ($elements[$structura[$num_or_name_col]] === $val) {
-                                    if (count($elements) === count($structura)) {
-                                        $i = 0;
-                                        foreach ($structura as $key => $value) {
-                                            if ($i === $value) $result[$key] = $elements[$i];
-                                            $i++;
-                                        }
+                if (isset($structura[$name_of_col])) {
+                    foreach ($lines as $line) {
+                        if (mb_substr($line, 0, 2) !== "-\t") {
+                            $elements = explode("\t", $line);
+                            if ($elements[$structura[$name_of_col]] === $val) {
+                                if (count($elements) === count($structura)) {
+                                    $i = 0;
+                                    foreach ($structura as $key => $value) {
+                                        if ($i === $value) $result[$key] = $elements[$i];
+                                        $i++;
                                     }
                                 }
                             }
@@ -1003,7 +983,7 @@ function my_read_row_where_file_structura($where, $dir = '', $filename = 'struct
                 }
                 
                 if (count($result) !== count($structura)) {
-                    $result = array ( );
+                    $result = array( );
                 }
             }
         }
@@ -1012,31 +992,16 @@ function my_read_row_where_file_structura($where, $dir = '', $filename = 'struct
     return $result;
 }
 
-function my_read_cell_where_file_structura($where, $num_or_name_col, $dir = '', $filename = 'structura.txt') {
-/* Поменять параметр $num_or_name_col на $name_of_col */
+function my_read_cell_where_file_structura($where, $name_of_col, $dir = '', $filename = 'structura.txt') {
+    
     $result = '';
     
     $structura = my_get_structura_from_file_structura($dir, $filename);
     
     if (count($structura)) {
-        
         $row = my_read_row_where_file_structura($where, $dir, $filename);
         
-        if (count($row) === count($structura)) {
-            $pattern_decimal = '{^\d+$}';
-            if (preg_match($pattern_decimal, $num_or_name_col)) {
-                if (array_search($num_or_name_col, $structura)) {
-                    foreach ($structura as $key => $val) {
-                        if ($num_or_name_col === $val) $result = $row[$key];
-                    }
-                }
-            }
-            else {
-                if (isset($structura[$num_or_name_col])) {
-                    $result = $row[$num_or_name_col];
-                }
-            }
-        }
+        if ((count($row) === count($structura)) && isset($structura[$name_of_col])) $result = $row[$name_of_col];
     }
     
     return $result;

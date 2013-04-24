@@ -113,7 +113,7 @@ function my_normalize_url_all($url, $base_url, $substring = '', $url_parent = ''
 }
 */
 
-function my_normalize_url_all_2($url, $parent_url, $base_url, $no_other = true) {
+function my_normalize_url_all_2($url, $parent_url, $base_url, $another) {
     
     $result = '';
     
@@ -188,7 +188,7 @@ function my_normalize_url_all_2($url, $parent_url, $base_url, $no_other = true) 
                 $result = $url;
             }
             
-            if ($no_other && (mb_strpos($result, '//') !== false)) {
+            if (!$another && (mb_strpos($result, '//') !== false)) {
                 if (mb_stripos($result, $base_url) === FALSE) $result = '';
             }
         }
@@ -239,28 +239,112 @@ function my_cleaned_text($text) {
 }
 */
 
-function my_info_array($file, $delimiter = "\t", $put_files = TRUE) {
+function my_info_array($file_info) {
     
-    $info_array = array ( );
+    $info = array( );
     
-    $pattern_file = '{^(.+?)\\.[^\\.]+$}i';
-    preg_match($pattern_file, $file, $match);
-    $file_info = $match[1] . '.info';
-    
-    if (isset ($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'windows-1251', 'UTF-8');
-    if (is_file($file_info) && filesize($file_info)) {
-        if (isset ($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
+    if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'windows-1251', 'UTF-8');
+    if (@filesize($file_info)) {
+        if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
         $lines = my_file_to_array($file_info);
-        for ($i = 0; $i < count($lines); $i++) {
-            if (mb_strlen($lines[$i]) > 0) {
-                $elements = explode($delimiter, $lines[$i]);
-                if (count($elements) === 2) $info_array[$elements[0]] = $elements[1];
+        if (count($lines)) {
+            for ($i = 0; $i < count($lines); $i++) {
+                $elements = explode("\t", $lines[$i]);
+                if (count($elements) === 2) $info[$elements[0]] = $elements[1];
             }
         }
-        if ($put_files) $info_array['file_info'] = $file_info;
+    }
+    else {
+        if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
     }
     
-    return $info_array;
+    return $info;
+}
+
+function my_info_to_file_info($info, $file_info, $write_method = 'write' /* 'add' */) {
+    
+    $result = false;
+    
+    if (count($info)) {
+        
+        $check = true;
+        
+        foreach ($info as $key => $value) {
+            if ($check) {
+                if ((mb_strpos($key, "\r") !== false)
+                 || (mb_strpos($key, "\n") !== false)
+                 || (mb_strpos($key, "\t") !== false)
+                 || (mb_strpos($value, "\r") !== false)
+                 || (mb_strpos($value, "\n") !== false)
+                 || (mb_strpos($value, "\t") !== false)) $check = false;
+            }
+        }
+        
+        if ($check) {
+            
+            $info_add = array( );
+            
+            if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'windows-1251', 'UTF-8');
+            if (@filesize($file_info)) {
+                if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
+                
+                if ($write_method === 'add') $info_add = my_info_array($file_info);
+            }
+            else {
+                if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
+            }
+            
+            $string = '';
+            
+            if (count($info_add)) {
+                
+                foreach ($info as $key => $value) {
+                    if (isset($info_add[$key])) unset($info_add[$key]);
+                }
+                
+                if (count($info_add)) {
+                    foreach ($info_add as $key => $value) $string .= $key . "\t" . $value . PHP_EOL;
+                }
+            }
+            
+            foreach ($info as $key => $value) $string .= $key . "\t" . $value . PHP_EOL;
+            
+            if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'windows-1251', 'UTF-8');
+            $f = fopen($file_info, 'wt');
+            if (isset($_SERVER['COMSPEC'])) $file_info = mb_convert_encoding($file_info, 'UTF-8', 'windows-1251');
+            
+            $result = fwrite($f, $string);
+            
+            fclose($f);
+        }
+    }
+    else {
+        if (@filesize($file_info)) $result = true;
+    }
+    
+    return $result;
+}
+
+function my_get_charset_from_info($info) {
+    
+    $charset = '';
+    
+    if (is_array($info)) {
+        if (isset($info['encoding'])) {
+            if (mb_strlen($info['encoding'])) $charset = $info['encoding'];
+        }
+        elseif (isset($info['charset'])) {
+            if (mb_strlen($info['charset'])) $charset = $info['charset'];
+        }
+        elseif (isset($info['charset_file'])) {
+            if (mb_strlen($info['charset_file'])) $charset = $info['charset_file'];
+        }
+        elseif (isset($info['charset_header'])) {
+            if (mb_strlen($info['charset_header'])) $charset = $info['charset_header'];
+        }
+    }
+    
+    return $charset;
 }
 
 function my_urls_array_diff($array_urls_in_keys, $array_urls_in_val) {

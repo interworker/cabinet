@@ -48,23 +48,33 @@
         
         $method = $_POST['method'];
         
+        $method_one_dir_string = $_POST['method_one_dir_string'];
+        
+        $exclude_string = $_POST['exclude_string'];
+        
+        $algorithm = false;
+        if (isset($_POST['algorithm'])) $algorithm = true;
+        
         $only_SGML = false;
         if (isset($_POST['only_SGML'])) $only_SGML = true;
         
         $etalon = false;
         if (isset($_POST['etalon'])) $etalon = true;
         
-        $link_mode = $_POST['link_mode'];
+        $another = false;
+        if (isset($_POST['another'])) $another = true;
+        
+        $linkmode = $_POST['linkmode'];
         
         $work_dir = $_POST['work_dir'];
 /* Конец разбора POST запроса */
         
-/* Добавить в FORM данные по строке $link_transform и $proxy */
+/* Добавить в FORM данные по строке $linkmode_transform_string и $proxy */
 /* Принудительно */
-        $link_transform = '';
+        $linkmode_transform_string = '';
         $proxy = false;
         
-        my_curl($start_url, $work_dir, $method, $only_SGML, $etalon, $link_mode, $link_transform, $proxy);
+        my_curl($start_url, $work_dir, $method, $method_one_dir_string, $algorithm, $only_SGML, $etalon, $exclude_string, $another, $linkmode, $linkmode_transform_string, $proxy);
         
 /* Переделать */
         $message = '<p>Сделано</p>';
@@ -94,6 +104,25 @@
                         </div><!-- .controls -->
                     </div><!-- .control-group -->
                     <div class="control-group">
+                        <label class="control-label" for="method_one_dir_string">Директория для метода <b>one_dir</b></label>
+                        <div class="controls">
+                            <input type="text" id="method_one_dir_string" name="method_one_dir_string" placeholder="по первой ссылке, если пусто">
+                        </div><!-- .controls -->
+                    </div><!-- .control-group -->
+                    <div class="control-group">
+                        <label class="control-label" for="exclude_string">Исключать URL, содержащие</label>
+                        <div class="controls">
+                            <input type="text" id="exclude_string" name="exclude_string">
+                        </div><!-- .controls -->
+                    </div><!-- .control-group -->
+                    <div class="control-group">
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" name="algorithm">Работать по алгоритму (для метода <b>all_from_one_link</b> или <b>one_dir</b>)
+                            </label><!-- .checkbox -->
+                        </div><!-- .controls -->
+                    </div><!-- .control-group -->
+                    <div class="control-group">
                         <div class="controls">
                             <label class="checkbox">
                                 <input type="checkbox" name="only_SGML">Только SGML
@@ -108,9 +137,16 @@
                         </div><!-- .controls -->
                     </div><!-- .control-group -->
                     <div class="control-group">
-                        <label class="control-label" for="link_mode">Метод обработки ссылок</label>
                         <div class="controls">
-                            <input type="text" id="link_mode" name="link_mode" placeholder="link_transform" REQUIRED>
+                            <label class="checkbox">
+                                <input type="checkbox" name="another">Выходить за пределы базового URL
+                            </label><!-- .checkbox -->
+                        </div><!-- .controls -->
+                    </div><!-- .control-group -->
+                    <div class="control-group">
+                        <label class="control-label" for="linkmode">Метод обработки ссылок</label>
+                        <div class="controls">
+                            <input type="text" id="linkmode" name="linkmode" placeholder="linkmode" REQUIRED>
                         </div><!-- .controls -->
                     </div><!-- .control-group -->
                     <!-- HIDDEN INPUTS -->

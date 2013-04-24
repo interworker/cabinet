@@ -10,12 +10,13 @@ function is_nonzero_hard($var) {
 
 function my_file_to_array($file, $trim = TRUE) {
     
-    $result_trim = array ( );
+    $result_trim = array( );
+    $result = array( );
     
-    if (isset ($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
-    if (file_exists($file)) {
+    if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
+    if (@filesize($file)) {
         $lines = explode("\n", file_get_contents($file));
-        if (isset ($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
         
         $lines = array_filter($lines, 'is_nonzero_hard');
         
@@ -24,36 +25,41 @@ function my_file_to_array($file, $trim = TRUE) {
                 if (mb_substr($line, 0, 1) === "\r") $line = mb_substr($line, 1);
                 if (mb_substr($line, -1) === "\r") $line = mb_substr($line, 0, -1);
                 if ($trim) {
-                    $result[ ] = trim($line);
+                    $result_trim[ ] = trim($line);
                 }
-                else $result[ ] = $line;
+                else $result_trim[ ] = $line;
             }
-            foreach ($result as $res) {
-                if (mb_strlen($res)) $result_trim[ ] = $res;
+            foreach ($result_trim as $res) {
+                if (mb_strlen($res)) $result[ ] = $res;
             }
         }
     }
+    else {
+        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+    }
     
-    return $result_trim;
+    return $result;
 }
 
 function my_string_to_array($string, $trim = TRUE) {
     
-    $result = array ( );
+    $result_trim = array( );
+    $result = array( );
     
-    if (mb_strlen($string)) {
-        $lines = explode("\n", $string);
-        $lines = array_filter($lines, 'is_nonzero_hard');
-        
-        if (count($lines)) {
-            foreach ($lines as $line) {
-                if (mb_substr($line, 0, 1) === "\r") $line = mb_substr($line, 1);
-                if (mb_substr($line, -1) === "\r") $line = mb_substr($line, 0, -1);
-                if ($trim) {
-                    $result[ ] = trim($line);
-                }
-                else $result[ ] = $line;
+    $lines = explode("\n", $string);
+    $lines = array_filter($lines, 'is_nonzero_hard');
+    
+    if (count($lines)) {
+        foreach ($lines as $line) {
+            if (mb_substr($line, 0, 1) === "\r") $line = mb_substr($line, 1);
+            if (mb_substr($line, -1) === "\r") $line = mb_substr($line, 0, -1);
+            if ($trim) {
+                $result_trim[ ] = trim($line);
             }
+            else $result_trim[ ] = $line;
+        }
+        foreach ($result_trim as $res) {
+            if (mb_strlen($res)) $result[ ] = $res;
         }
     }
     
@@ -185,9 +191,9 @@ function my_make_dirs($dir, $rel_folder = '') {
                 $dir = $tempdir;
                 foreach ($folders as $folder) {
                     $dir .= DIRECTORY_SEPARATOR . $folder;
-                    if (isset ($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'windows-1251', 'UTF-8');
+                    if (isset($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'windows-1251', 'UTF-8');
                     if (!is_dir($dir)) @mkdir($dir, 0777);
-                    if (isset ($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'UTF-8', 'windows-1251');
+                    if (isset($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'UTF-8', 'windows-1251');
                 }
             }
         }
@@ -461,32 +467,13 @@ function my_random_file($dir, $prefix, $filetype = '', $length = 15) {
     return $file;
 }
 
-/* УСТАРЕЛО
-function my_file_in_array($file) {
-    
-    $result = array ( );
-    
-    if (filesize($file) > 0) {
-		$f_func = fopen($file, "rt");
-		$lines = explode("\n", fread($f_func, filesize($file)));
-		fclose($f_func);
-        
-        $result = array_filter($lines, 'is_nonzero');
-    }
-    else {
-        $result = array ('при расчете функции my_file_in_array произошла ошибка => ' . $file . ' пустой, либо его нет');
-    }
-    
-    return $result;
-}
-*/
-
+/* УСТАРЕЛО */
 function my_file_in_line($file) {
     
     $file_in_line = '';
     
     if (isset ($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
-	if (filesize($file)) {
+	if (@filesize($file)) {
 		$f_func = fopen($file, "rt");
 		$lines = explode("\n", fread($f_func, filesize($file)));
         if (isset ($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
@@ -534,14 +521,77 @@ function my_file_in_line($file) {
     return $file_in_line;
 }
 
+function my_file_in_line_2($file, $need_delim = true) {
+    
+    $string_in_line = '';
+    
+    if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
+    if (@filesize($file)) {
+        $lines = explode("\n", file_get_contents($file));
+        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+        
+        if (count($lines)) {
+            for ($i = 0; $i < count($lines); $i++) {
+                if (mb_strlen($lines[$i])) {
+                    $str_func = trim($lines[$i]);
+                    if (mb_strlen($str_func)) {
+                        if ($need_delim) {
+                            $string_in_line .= ' ' . $str_func;
+                        }
+                        else {
+                            if (mb_substr($str_func, 0, 1) !== '<') {
+                                $string_in_line .= ' ' . $str_func;
+                            }
+                            else {
+                                $string_in_line .= $str_func;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        $lines = explode("\r", $string_in_line);
+        
+        if (count($lines) > 1) {
+            
+            $string_in_line = '';
+            
+            for ($i = 0; $i < count($lines); $i++) {
+                if (mb_strlen($lines[$i])) {
+                    $str_func = trim($lines[$i]);
+                    if (mb_strlen($str_func)) {
+                        if ($need_delim) {
+                            $string_in_line .= ' ' . $str_func;
+                        }
+                        else {
+                            if (mb_substr($str_func, 0, 1) !== '<') {
+                                $string_in_line .= ' ' . $str_func;
+                            }
+                            else {
+                                $string_in_line .= $str_func;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else {
+        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+    }
+    
+    return $string_in_line;
+}
+
+/* УСТАРЕЛО */
 function my_string_in_line($string, $delimiter = ' ') {
     
     $string_in_line = '';
     
-    if (mb_strlen($string)) {
-        
-        $lines = explode("\n", $string);
-        
+    $lines = explode("\n", $string);
+    
+    if (count($lines)) {
         for ($i = 0; $i < count($lines); $i++) {
             if (mb_strlen($lines[$i])) {
                 $str_func = trim($lines[$i]);
@@ -583,10 +633,9 @@ function my_string_in_line_2($string, $need_delim = true) {
     
     $string_in_line = '';
     
-    if (mb_strlen($string)) {
-        
-        $lines = explode("\n", $string);
-        
+    $lines = explode("\n", $string);
+    
+    if (count($lines)) {
         for ($i = 0; $i < count($lines); $i++) {
             if (mb_strlen($lines[$i])) {
                 $str_func = trim($lines[$i]);
@@ -634,88 +683,71 @@ function my_string_in_line_2($string, $need_delim = true) {
     return $string_in_line;
 }
 
-/* УСТАРЕЛО
-function my_array_in_file($array, $file) {
-    if (count($array) > 0) {
-        $f = fopen( $file, 'wt' );
-        foreach ($array as $k => $v) {
-            $k = trim($k);
-            $v = trim($v);
-            if (mb_strlen($v) > 0) {
-                $str = $k . "\t" . $v . "\n";
-                fwrite($f, $str);
-            }
-        }
-        fclose($f);
-    }
-}
-*/
-
-function my_array_to_file($array, $file, $add_write = 'write' /* 'add' */, $key_mode = 'auto' /* 'with_keys' || 'without_keys' */, $delimiter = "\t") {
-/* Режим ADD использовать с осторожностью, он дублирует записи. Лучше перезаписывать файл, работая в паре с функцией MY_FILE_TO_ARRAY */
+function my_array_to_file($array, $file, $write_method = 'write' /* 'add' */, $key_method = 'with_keys' /* 'without_keys' */, $delimiter = "\t") {
+    
     $result = false;
     
-    $check = true;
-    foreach ($array as $key => $value) {
+    if (count($array) && (($key_method === 'with_keys') || ($key_method === 'without_keys'))) {
+        
+        $check = true;
+        
+        foreach ($array as $key => $value) {
+            if ($check) {
+                if ((mb_strpos($key, "\r") !== false)
+                 || (mb_strpos($key, "\n") !== false)
+                 || (mb_strpos($key, $delimiter) !== false)
+                 || (mb_strpos($value, "\r") !== false)
+                 || (mb_strpos($value, "\n") !== false)
+                 || (mb_strpos($value, $delimiter) !== false)) $check = false;
+            }
+        }
+        
         if ($check) {
-            if ((mb_strpos($key, "\r") !== false)
-             || (mb_strpos($key, "\n") !== false)
-             || (mb_strpos($key, $delimiter) !== false)
-             || (mb_strpos($value, "\r") !== false)
-             || (mb_strpos($value, "\n") !== false)
-             || (mb_strpos($value, $delimiter) !== false)) $check = false;
-        }
-    }
-    
-    if ($check) {
-        
-        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
-        if ($add_write === 'write') {
-            $f = fopen($file, 'wt');
-        }
-        elseif ($add_write === 'add') {
-            $f = fopen($file, 'at');
-        }
-        if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
-        
-        if (count($array) > 0) {
-            $string = '';
-            if ($key_mode === 'auto') {
-                $pattern_numeric_key = '{^\\d+$}';
-                $check_numeric_key = true;
-                foreach ($array as $key => $value) {
-                    if ($check_numeric_key) {
-                        if (!preg_match($pattern_numeric_key, $key)) $check_numeric_key = false;
-                    }
-                }
-                if (!$check_numeric_key) {
-                    $key_mode = 'with_keys';
-                }
-                else {
-                    $key_mode = 'without_keys';
-                }
+            
+            $lines = array( );
+            
+            if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
+            if (@filesize($file)) {
+                if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+                if ($write_method === 'add') $lines = my_file_to_array($file, false);
+            }
+            else {
+                if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
             }
             
-            if ($key_mode === 'with_keys') {
-                foreach ($array as $key => $value) {
-                    $string .= $key . $delimiter . $value . "\n";
-                }
+            $string = '';
+            
+            if (count($lines)) {
+                foreach ($lines as $line) $string .= $line . PHP_EOL;
+            }
+            
+            if ($key_method === 'with_keys') {
+                foreach ($array as $key => $value) $string .= $key . $delimiter . $value . PHP_EOL;
             }
             elseif ($key_mode === 'without_keys') {
-                foreach ($array as $value) {
-                    $string .= $value . "\n";
-                }
+                foreach ($array as $value) $string .= $value . PHP_EOL;
             }
-            if (mb_strlen($string)) $result = fwrite($f, $string);
+            
+            if (mb_strlen($string)) {
+                if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
+                $f = fopen($file, 'wt');
+                if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
+                
+                $result = fwrite($f, $string);
+                
+                fclose($f);
+            }
         }
-        fclose($f);
+    }
+    else {
+        if (@filesize($file)) $result = true;
     }
     
     return $result;
 }
 
 function my_get_structura_from_file_structura($dir, $filename = 'structura.txt') {
-    
+/* ПРОДОЛЖИТЬ ЗДЕСЬ - Поменять во всех функциях, записывающих данные в файлы "\n" на PHP_EOL */
     $structura = array( );
     
     $file_structura = my_file($filename, $dir);

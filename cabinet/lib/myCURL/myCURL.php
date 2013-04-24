@@ -1,139 +1,5 @@
 <?php
 
-/* УСТАРЕЛО
-function my_curl_request_temp($url, $referer, $User_Agent, $HTTP_Headers, $temp_dir) {
-    
-    $result = '';
-    
-    $url = trim($url);
-    
-    if (mb_strlen($url) && (preg_match('{\s}', $url) === 0)) {
-        if (mb_substr($url, 0, 2) === '//') $url = 'http:' . $url;
-        if (mb_substr($url, 0, 7) !== 'http://') $url = 'http://' . $url;
-        
-        $temp_file = my_random_file($temp_dir, 'temp_');
-        
-        $check = false;
-        
-        if (mb_strlen($temp_file)) {
-            $pattern_host = '{^(http://([^/]+))}i';
-            if (preg_match($pattern_host, $url, $match)) {
-                $host = $match[2];
-                $base_url = $match[1];
-                
-                if ($referer === 'base_url') $referer = $base_url . '/';
-                
-                $HTTP_Headers[0] = 'Host: ' . $host;
-                
-                $temp_file_info   = $temp_file . '.info';
-                if (isset($_SERVER['COMSPEC'])) $temp_file_info = mb_convert_encoding($temp_file_info, 'windows-1251', 'UTF-8');
-                $f_info = fopen($temp_file_info, 'wt');
-                if (isset($_SERVER['COMSPEC'])) $temp_file_info = mb_convert_encoding($temp_file_info, 'UTF-8', 'windows-1251');
-                
-                $i = 0;
-                do {
-                    $i++;
-                    
-                    $temp_file_header = $temp_file . '.header';
-                    if (isset ($_SERVER['COMSPEC'])) $temp_file_header = mb_convert_encoding($temp_file_header, 'windows-1251', 'UTF-8');
-                    $f_header = fopen($temp_file_header, 'wt');
-                    if (isset ($_SERVER['COMSPEC'])) $temp_file_header = mb_convert_encoding($temp_file_header, 'UTF-8', 'windows-1251');
-                    
-                    $temp_file_error = $temp_file . '.error';
-                    if (isset ($_SERVER['COMSPEC'])) $temp_file_error = mb_convert_encoding($temp_file_error, 'windows-1251', 'UTF-8');
-                    $f_error = fopen($temp_file_error, 'wt');
-                    if (isset ($_SERVER['COMSPEC'])) $temp_file_error = mb_convert_encoding($temp_file_error, 'UTF-8', 'windows-1251');
-                    
-                    $ch = curl_init($url);
-                    
-                    if ($referer) curl_setopt($ch, CURLOPT_REFERER, $referer);
-                    curl_setopt($ch, CURLOPT_USERAGENT, $User_Agent);
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, $HTTP_Headers);
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                    curl_setopt($ch, CURLOPT_MAXREDIRS, 77);
-                    curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-                    curl_setopt($ch, CURLOPT_VERBOSE, true);
-                    curl_setopt($ch, CURLOPT_WRITEHEADER, $f_header);
-                    curl_setopt($ch, CURLOPT_STDERR, $f_error);
-                    curl_setopt($ch, CURLOPT_NOBODY, true);
-                    
-                    curl_exec($ch);
-                    
-                    curl_close($ch);
-                    
-                    fclose($f_header);
-                    
-                    fclose($f_error);
-                    
-                    $header_lines = my_file_to_array($temp_file_header);
-                    
-                    if (count($header_lines)) $check = true;
-                    
-                    if ($check) {
-                        
-                        $status = '000';
-                        $pattern_status = '{\\s(\\d{3})}';
-                        foreach ($header_lines as $header_line) {
-                            if (mb_substr($header_line, 0, 5) === 'HTTP/') {
-                                if (preg_match($pattern_status, $header_line, $match)) {
-                                    $status = $match[1];
-                                }
-                            }
-                        }
-                        
-                        $charset = '';
-                        $content_type = '';
-                        $pattern_content_type_header = '{Content-Type:\\s+([a-z0-9-\\./]+)}i';
-                        $pattern_charset_header = '{charset\\s*=\\s*(.+)$}i';
-                        foreach ($header_lines as $header_line) {
-                            if (preg_match($pattern_content_type_header, $header_line, $match)) {
-                                $content_type = $match[1];
-                                $content_type = trim($content_type);
-                                $content_type = mb_strtolower($content_type);
-                            }
-                            if (preg_match($pattern_charset_header, $header_line, $match)) {
-                                $charset = $match[1];
-                                $charset = trim($charset);
-                                if (mb_strpos($charset, '"') !== FALSE) $charset = str_replace('"', '', $charset);
-                                if (mb_strpos($charset, "'") !== FALSE) $charset = str_replace("'", '', $charset);
-                                if (mb_strpos($charset, "\\") !== FALSE) $charset = str_replace("\\", '', $charset);
-                                
-                                $charset = mb_strtolower($charset);
-                                $charset = trim($charset);
-                            }
-                        }
-                        
-                        $str_info =   'status' . "\t" . $status . "\n"
-                                    . 'own_url' . "\t" . $url . "\n"
-                                    . 'base_url' . "\t" . $base_url . "\n";
-                        
-                        if ($referer === false) $referer = 'false';
-                        
-                        $str_info .= 'referer' . "\t" . $referer . "\n";
-                        
-                        if (mb_strlen($content_type)) $str_info .= 'content_type' . "\t" . $content_type . "\n";
-                        
-                        if (mb_strlen($charset)) $str_info .= 'charset' . "\t" . $charset . "\n";
-                        
-                        fwrite($f_info, $str_info);
-                    }
-                    
-                    $tempfilename_header = basename($tempfile_header);
-                    my_delete_files($tempfilename_header, $dir, true);
-                }
-                while (($check === false) && ($i <= 100));
-                
-                fclose($f_info);
-            }
-        }
-        
-        if ($check) $result = $temp_file;
-    }
-    
-    return $result;
-}
-*/
-
 /* УСТАРЕЛО */
 #function my_curl_request($url, $file, $check_200_OK = FALSE, $check_end = FALSE, $output_type = 'content', $encoding = 'identity', $curl_mode = 't', $ref = '', $repeat = 1, $get_cookie = FALSE, $cookie = '', $post_data = array ( ), $cookie_header = FALSE) {
 #    
@@ -384,7 +250,7 @@ function my_get_base_url($url) {
 }
 
 function my_curl_request($url, $User_Agent, $HTTP_Headers, $request_mode /* 'temp' || 'normal' */, $file_place /* array('temp_dir' => '', 'file' => '') */, $referer = false /* 'base_url' || $url */, $curl_mode = '' /* 't' || 'b' */, $output_type = 'files' /* 'check' || 'content' */, $temp_file_info = '', $get_cookie = false, $cookie = '', $post_data = array( ), $cookie_header = false) {
-    
+/* ПРОДОЛЖИТЬ ЗДЕСЬ - Переработать параметры функции, поменять переносы строк на PHP_EOL */
     $result = false;
     
     $check = false;
@@ -540,7 +406,7 @@ function my_curl_request($url, $User_Agent, $HTTP_Headers, $request_mode /* 'tem
                             if (mb_strlen($charset)) $info['charset_header'] = $charset;
                             
                             if ($request_mode === 'temp') {
-                                my_array_to_file($info, $file_info);
+                                my_info_to_file_info($info, $file_info);
                             }
                             elseif ($request_mode === 'normal') {
                                 
@@ -552,8 +418,7 @@ function my_curl_request($url, $User_Agent, $HTTP_Headers, $request_mode /* 'tem
                                 }
                                 
                                 if ($check_info) {
-                                    my_array_to_file($info, $file_info);
-                                    
+                                    my_info_to_file_info($info, $file_info);
                                     if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
                                     if ($curl_mode === 't') {
                                         $f = fopen($file, 'wt');
@@ -635,165 +500,6 @@ function my_curl_request($url, $User_Agent, $HTTP_Headers, $request_mode /* 'tem
     return $result;
 }
 
-/* УСТАРЕЛО */
-function my_curl_request_deeper($num_of_row, $structura_file, $filename_temp = TRUE) {
-    
-    $result = $num_of_row + 1;
-    
-    $index = $num_of_row - 1;
-    $refer_index = $index - 1;
-    
-    $dir = dirname($structura_file);
-    
-    if (file_exists($structura_file) && filesize($structura_file)) {
-        $structura = my_check_structura_file($structura_file);
-        if (($num_of_row > 0) && count($structura) && isset ($structura['url'])) {
-            $strs = my_read_row_structura_file($structura_file, $num_of_row);
-            $urls = my_read_col_structura_file($structura_file, $structura['url']);
-            $new_strs = array ( );
-            $new_strs_index = 0;
-            if (count($urls) && isset ($urls[$index])) {
-                
-                if (isset ($structura['id'])) $strs['id'] = $num_of_row;
-                
-                $url = $urls[$index];
-                
-                if ($refer_index < 0) {
-                    $refer = FALSE;
-                }
-                else $refer = $urls[$refer_index];
-                
-                if ($filename_temp) {
-                    $filename = 'temp.html';
-                }
-                else {
-                    $pattern_filename1 = '{([^/]+htm)l?$}i';
-                    $replace_filename1 = '$1l';
-                    $pattern_filename2 = '{(^|/)([^/]+)/?$}i';
-                    $filename = 'page_unknown.html';
-                    if (preg_match($pattern_filename1, $url, $match)) {
-                        if (mb_strlen($match[1])) $filename = preg_replace($pattern_filename1, $replace_filename1, $match[1]);
-                    }
-                    elseif (preg_match($pattern_filename2, $url, $match)) {
-                        if (mb_strlen($match[2])) {
-                            $filename = str_replace('.', '__DOT__', $match[2]);
-                            $filename .= '.html';
-                        }
-                    }
-                    if (mb_strpos($filename, '%') !== FALSE) $filename = urldecode($filename);
-                    if (mb_strpos($filename, ' ') !== FALSE) $filename = str_replace(' ', '_', $filename);
-                    if (isset ($_SERVER['COMSPEC'])) $filename = mb_convert_encoding($filename, 'windows-1251');
-                }
-                $file = $dir . DIRECTORY_SEPARATOR . $filename;
-                
-                if (isset ($structura['filename'])) $strs['filename'] = $filename;
-                if (isset ($structura['file'])) $strs['file'] = $file;
-                
-                if (my_curl_request($url, $file, TRUE, TRUE, 'content', 'identity', 't', $refer, 10)) {
-                    
-                    $info = my_info_array($file);
-                    
-                    $charset = 'utf-8';
-                    if (isset ($info['encoding'])) {
-                        $charset = $info['encoding'];
-                    }
-                    elseif (isset ($info['charset'])) {
-                        $charset = $info['charset'];
-                    }
-                    
-                    if (my_file_in_utf8_4phpquery($file, $charset)) {
-                        if (isset ($document)) unset ($document);
-                        $document = phpQuery::newDocumentFile($file);
-                        $title_tag = $document->find('title');
-                        $title = '';
-                        foreach ($title_tag as $title_tag) {
-                            $title_tag = pq($title_tag);
-                            $title = $title_tag->text( );
-                        }
-                        if (mb_strlen($title)) {
-                            if (mb_strpos($title, "\t") !== FALSE) $title = str_replace("\t", ' ', $title);
-                            if (isset ($structura['title'])) $strs['title'] = $title;
-                            if (isset ($structura['anchor'])) {
-                                if (mb_strlen($strs['anchor']) === 0) $strs['anchor'] = $title;
-                            }
-                        }
-/* ---------------   начало редактируемой части   --------------- */
-                        $pattern_counting = '{\\(?(\\d+)\\)?}';
-                        if (isset ($document)) unset ($document);
-                        $document = phpQuery::newDocumentFile($file);
-                        if (isset ($structura['counting'])) {
-                            $headers = $document->find('h2.news');
-                            foreach ($headers as $header) {
-                                $header = pq($header);
-                                $text = $header->text( );
-                                if (mb_substr($text, 0, 13) === 'Каталог фирм ') {
-                                    $strs['counting'] = 0;
-                                    $ps = $header;
-                                    do {
-                                        $ps = $ps->next('p');
-                                        foreach ($ps as $p) {
-                                            $p = pq($p);
-                                            $text = $p->text( );
-                                            if (preg_match($pattern_counting, $text, $match)) {
-                                                if (mb_strlen($match[1])) $strs['counting'] += (int)$match[1];
-                                            }
-                                        }
-                                    }
-                                    while (count($ps));
-                                }
-                            }
-                        }
-                        $mainpart = $document->find('table[cellspacing="20"] td[width="180"]');
-                        $mainpart = (string)$mainpart;
-                        $mainpart = my_string_in_line($mainpart);
-                        $pattern_mainpart = '{((?=<p><a).*(?=<ul>))}i';
-                        if (preg_match($pattern_mainpart, $mainpart, $match)) {
-                            if (mb_strlen($match[1])) {
-                                if (isset ($document)) unset ($document);
-                                $document = phpQuery::newDocument($match[1]);
-                                $anchors = $document->find('a');
-/* особое внимание */           foreach ($anchors as $anchor) {
-                                    $anchor = pq($anchor);
-                                    $href = $anchor->attr('href');
-                                    $href = my_normalize_url($href, $info['base_url'], TRUE, $info['base_url']);
-                                    if (array_search($href, $urls) === FALSE) {
-                                        $text = $anchor->text( );
-                                        if (mb_strpos($text, "\t") !== FALSE) $text = str_replace("\t", ' ', $text);
-                                        $p = $anchor->parent('p');
-                                        foreach ($p as $p) {
-                                            $p = pq($p);
-                                            $p = $p->text( );
-                                            if (preg_match($pattern_counting, $p, $match)) {
-                                                if (mb_strlen($match[1])) {
-                                                    if (isset ($structura['counting'])) $new_strs[$new_strs_index]['counting'] = (int)$match[1];
-                                                }
-                                            }
-                                        }
-                                        if (isset ($structura['level']) && ($strs['level'] >= 0)) $new_strs[$new_strs_index]['level'] = $strs['level'] + 1;
-                                        if (isset ($structura['parent']) && mb_strlen($strs['id'])) $new_strs[$new_strs_index]['parent'] = $strs['id'];
-                                        if (isset ($structura['url']) && mb_strlen($href)) $new_strs[$new_strs_index]['url'] = $href;
-                                        if (isset ($structura['anchor']) && mb_strlen($text)) $new_strs[$new_strs_index]['anchor'] = $text;
-                                        $new_strs_index++;
-                                    }
-                                }
-                            }
-                        }
-/* ---------------   конец редактируемой части   --------------- */
-                    }
-                }
-            }
-            
-            $data_rewrite = array ( );
-            if (count($strs)) $data_rewrite[ ] = $strs;
-            if (count($data_rewrite)) my_write_structura_file($structura_file, $num_of_row, $data_rewrite);
-            
-            if (count($new_strs)) my_write_structura_file($structura_file, $num_of_row, $new_strs, 'write');
-        }
-    }
-    
-    return $result;
-}
-
 function my_dynamic_link_transform($link) {
     
     $result = '';
@@ -821,245 +527,7 @@ function my_dynamic_link_transform($link) {
     return $result;
 }
 
-/* УСТАРЕЛО */
-function my_curl_request_folder($url, $dir, $etalon = true) {
-    
-    $result = array (
-                     'base_dir' => '',
-                     'temp_dir' => '',
-                     'base_dir_etalon' => '',
-                     'site_dir' => '',
-                     'site_dir_etalon' => ''
-/*
-                     ,
-                     'filename' => ''
-*/
-                    );
-    
-    $dir = my_path($dir);
-    
-    if (isset($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'windows-1251', 'UTF-8');
-    if (file_exists($dir) && is_dir($dir)) {
-        if (isset($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'UTF-8', 'windows-1251');
-        
-        $url = trim($url);
-        
-        if (mb_strlen($url) && (preg_match('{\s}', $url) === 0)) {
-            
-            $pattern_host = '{^(((https?:)?//)?([^/]+))}i';
-            $base_folder = '';
-            if (preg_match($pattern_host, $url, $match)) $base_folder = $match[1];
-            
-            if (mb_strlen($base_folder)) {
-                $pattern_site_folder = '{([^/]+)$}';
-                if (preg_match($pattern_site_folder, $base_folder, $match)) {
-                    $domen = $match[1];
-                    $base_dir = $dir . DIRECTORY_SEPARATOR . $domen;
-                    $base_dir = my_make_dirs($base_dir);
-                    $site_dir = $base_dir;
-                    $temp_dir = $dir . DIRECTORY_SEPARATOR . $domen . '__temp';
-                    $temp_dir = my_make_dirs($temp_dir);
-                    
-                    if ($etalon) {
-                        $base_dir_etalon = $dir . DIRECTORY_SEPARATOR . $domen . '__etalon';
-                        $base_dir_etalon = my_make_dirs($base_dir_etalon);
-                        $site_dir_etalon = $base_dir_etalon;
-                    }
-                    
-                    $base_folder_length = mb_strlen($base_folder);
-                    $link = mb_substr($url, $base_folder_length);
-/*
-                    if (mb_strpos($link, '?') !== FALSE) $link = str_replace('?', '__QES__', $link);
-                    if (mb_strpos($link, '=') !== FALSE) $link = str_replace('=', '__EQU__', $link);
-                    if (mb_strpos($link, '&') !== FALSE) $link = str_replace('&', '__AMP__', $link);
-                    if (mb_strpos($link, '#') !== FALSE) $link = str_replace('#', '__OKT__', $link);
-                    if (mb_strpos($link, '+') !== FALSE) $link = str_replace('+', '__PLS__', $link);
-*/
-                    $filename = '';
-                    $dirpath = '';
-                    $pattern_dir_end = '{/[^/\\.]+$}i';
-                    
-                    if (mb_strlen($link) <= 1 ) {
-                        $filename = 'index.html';
-                    }
-                    elseif ((mb_substr($link, -1) === '/') && (mb_strlen($link) > 2)) {
-                        $filename = 'index.html';
-                        $dirpath = mb_substr($link, 1, -1);
-                    }
-                    elseif (preg_match($pattern_dir_end, $link)) {
-                        $filename = 'index.html';
-                        $dirpath = mb_substr($link, 1);
-                    }
-                    else {
-                        $pattern_dynamic_link = '{\\?|=|&|#|\\+}';
-                        if (preg_match($pattern_dynamic_link, $link) === 0) {
-                            $pattern_filename = '{([^/]+)$}i';
-                            if (preg_match($pattern_filename, $link, $match)) {
-                                $filename = $match[1];
-                                $filename_length = -1*(mb_strlen($filename) + 1);
-                                $dirpath = mb_substr($link, 1, $filename_length);
-                            }
-                        }
-#                       else { необходимо придумать, что делать с динамическими страницами }
-                    }
-                    
-                    if (mb_strlen($dirpath)) {
-                        if (mb_strlen($site_dir)) $site_dir = my_make_dirs($site_dir, $dirpath);
-                        if ($etalon && mb_strlen($site_dir_etalon)) $site_dir_etalon = my_make_dirs($site_dir_etalon, $dirpath);
-                    }
-                    
-                    if (mb_strlen($site_dir)) {
-                        $result['base_dir'] = $base_dir;
-                        $result['temp_dir'] = $temp_dir;
-                        $result['site_dir'] = $site_dir;
-                        if ($etalon) {
-                            if (mb_strlen($base_dir_etalon)) $result['base_dir_etalon'] = $base_dir_etalon;
-                            if (mb_strlen($site_dir_etalon)) $result['site_dir_etalon'] = $site_dir_etalon;
-                        }
-#                        if (mb_strlen($filename)) $result['filename'] = $filename;
-                    }
-                }
-            }
-        }
-    }
-    else {
-        if (isset($_SERVER['COMSPEC'])) $dir = mb_convert_encoding($dir, 'UTF-8', 'windows-1251');
-    }
-    
-    return $result;
-}
-
-/* УСТАРЕЛО */
-function my_curl_request_filename($url, $content_type, $site_dir, $site_dir_etalon = '') {
-    
-    $result = array (
-                     'file' => '',
-                     'curl_mode' => '',
-                     'error' => false,
-                     'warning' => '',
-                     'file_etalon' => ''
-                    );
-    
-    $file = '';
-    $curl_mode = '';
-    $error = false;
-    $warning = '';
-    $file_etalon = '';
-    
-    $pattern_content_type = '{^([^/]+)/([^/]+)$}';
-    $extension = '.';
-    if (preg_match($pattern_content_type, $content_type, $match)) {
-        if ($match[1] === 'text') {
-            $curl_mode = 't';
-        }
-        else {
-            $curl_mode = 'b';
-        }
-        if ($content_type === 'text/plain') {
-            $extension .= 'txt';
-        }
-        else {
-            if ($match[2] === 'jpeg') {
-                $extension .= 'jpg';
-            }
-            elseif (mb_substr($match[2], -10) === 'javascript') {
-                $curl_mode = 't';
-                $extension .= 'js';
-            }
-            else {
-                $extension .= $match[2];
-            }
-        }
-    }
-    else {
-        $curl_mode = 'b';
-        $extension .= 'unknown';
-        $error = true;
-        $warning = 'Не определен curl_mode или не найден тип-расширение файла';
-    }
-    
-    $url = trim($url);
-    
-    if (mb_strlen($url) && (preg_match('{\s}', $url) === 0)) {
-        $pattern_host = '{^(((https?:)?//)?([^/]+))}i';
-        if (preg_match($pattern_host, $url, $match)) {
-            
-            $base_url = $match[1];
-            
-            $base_url_length = mb_strlen($base_url);
-            $link = mb_substr($url, $base_url_length);
-            
-            $filename = '';
-            $pattern_dir_end = '{/[^/\\.]+$}i';
-            
-            if ((mb_strlen($link) <= 1) || ((mb_substr($link, -1) === '/') && (mb_strlen($link) > 2)) || preg_match($pattern_dir_end, $link)) {
-                $filename = 'index' . $extension;
-                if ($extension !== '.html') {
-                    $error = true;
-                    $warning = 'Ожидалось расширение файла .html';
-                }
-            }
-            else {
-                $pattern_dynamic_link = '{\\?|=|&|#|\\+|,}';
-                if (preg_match($pattern_dynamic_link, $link) === 0) {
-                    $pattern_filename = '{([^/]+)$}i';
-                    if (preg_match($pattern_filename, $link, $match)) {
-                        $filename = $match[1];
-                        $pattern_filename_extension = '{(\\.[^\\.]+)$}';
-                        if (preg_match($pattern_filename_extension, $filename, $match)) {
-                            $match[1] = mb_strtolower($match[1]);
-                            if ($match[1] !== $extension) {
-                                $error = true;
-                                $warning = 'Реальное расширение файла не совпадает с данными Content-Type в Заголовках';
-                            }
-                        }
-                    }
-                }
-                else {
-                    $error = true;
-                    $warning = 'Внимание! Используется динамическая ссылка';
-                    
-                    $pattern_filename = '{([^/]+)$}i';
-                    if (preg_match($pattern_filename, $link, $match)) {
-                        
-                        $filename = $match[1];
-                        
-                        if (mb_strpos($filename, '.') !== FALSE) $filename = str_replace('.', '__PNT__', $filename);
-                        if (mb_strpos($filename, '?') !== FALSE) $filename = str_replace('?', '__QES__', $filename);
-                        if (mb_strpos($filename, '=') !== FALSE) $filename = str_replace('=', '__EQU__', $filename);
-                        if (mb_strpos($filename, '&') !== FALSE) $filename = str_replace('&', '__AMP__', $filename);
-                        if (mb_strpos($filename, '#') !== FALSE) $filename = str_replace('#', '__OKT__', $filename);
-                        if (mb_strpos($filename, '+') !== FALSE) $filename = str_replace('+', '__PLS__', $filename);
-                        if (mb_strpos($filename, ',') !== FALSE) $filename = str_replace(',', '__CMM__', $filename);
-                    }
-                    
-                    if (mb_strlen($filename)) $filename .= $extension;
-                }
-            }
-            
-            if (mb_strlen($filename)) {
-                $file = $site_dir . DIRECTORY_SEPARATOR . $filename;
-                if (mb_strlen($site_dir_etalon)) $file_etalon = $site_dir_etalon . DIRECTORY_SEPARATOR . $filename;
-            }
-            else {
-                $file = my_random_file($site_dir, 'temp_');
-                if (mb_strlen($file)) $file .= $extension;
-                $error = true;
-                $warning = 'Имя файла из ссылки не определено и сгенерировано случайным образом';
-            }
-        }
-    }
-    
-    $result['file'] = $file;
-    $result['curl_mode'] = $curl_mode;
-    $result['error'] = $error;
-    if ($error) $result['warning'] = $warning;
-    if (mb_strlen($file_etalon)) $result['file_etalon'] = $file_etalon;
-    
-    return $result;
-}
-
-function my_curl_create_base_dirs($url, $dir, $etalon = true, $remove_dirs = false) {
+function my_curl_create_base_dirs($url, $dir = '', $etalon = true, $remove_dirs = false) {
     
     $result = array (
                      'base_url' => '',
@@ -1104,6 +572,7 @@ function my_curl_create_base_dirs($url, $dir, $etalon = true, $remove_dirs = fal
                     }
                     else {
                         if (isset($_SERVER['COMSPEC'])) $base_dir = mb_convert_encoding($base_dir, 'UTF-8', 'windows-1251');
+                        
                         $result_base_dir = $base_dir;
                     }
                     
@@ -1114,10 +583,12 @@ function my_curl_create_base_dirs($url, $dir, $etalon = true, $remove_dirs = fal
                     if (isset($_SERVER['COMSPEC'])) $temp_dir = mb_convert_encoding($temp_dir, 'windows-1251', 'UTF-8');
                     if (!file_exists($temp_dir)) {
                         if (isset($_SERVER['COMSPEC'])) $temp_dir = mb_convert_encoding($temp_dir, 'UTF-8', 'windows-1251');
+                        
                         $result_temp_dir = my_make_dirs($temp_dir);
                     }
                     else {
                         if (isset($_SERVER['COMSPEC'])) $temp_dir = mb_convert_encoding($temp_dir, 'UTF-8', 'windows-1251');
+                        
                         $result_temp_dir = $temp_dir;
                     }
                     
@@ -1129,10 +600,12 @@ function my_curl_create_base_dirs($url, $dir, $etalon = true, $remove_dirs = fal
                         if (isset($_SERVER['COMSPEC'])) $base_dir_etalon = mb_convert_encoding($base_dir_etalon, 'windows-1251', 'UTF-8');
                         if (!file_exists($base_dir_etalon)) {
                             if (isset($_SERVER['COMSPEC'])) $base_dir_etalon = mb_convert_encoding($base_dir_etalon, 'UTF-8', 'windows-1251');
+                            
                             $result_base_dir_etalon = my_make_dirs($base_dir_etalon);
                         }
                         else {
                             if (isset($_SERVER['COMSPEC'])) $base_dir_etalon = mb_convert_encoding($base_dir_etalon, 'UTF-8', 'windows-1251');
+                            
                             $result_base_dir_etalon = $base_dir_etalon;
                         }
                     }
@@ -1184,6 +657,7 @@ function my_curl_request_dir_filename($url, $content_type, $dir, $etalon = true)
         
         if (mb_strlen($url) && (preg_match('{\s}', $url) === 0)) {
             $base_dirs = my_curl_create_base_dirs($url, $dir, $etalon);
+            
             if (mb_strlen($base_dirs['base_url']) && mb_strlen($base_dirs['base_dir'])) {
                 $base_url_length = mb_strlen($base_dirs['base_url']);
                 if (mb_substr($url, 0, $base_url_length) === $base_dirs['base_url']) {
@@ -1436,6 +910,7 @@ function my_get_charset_from_file_regex($file, $file_info) {
                 if (mb_strpos($charset, '"') !== FALSE) $charset = str_replace('"', '', $charset);
                 if (mb_strpos($charset, "'") !== FALSE) $charset = str_replace("'", '', $charset);
                 if (mb_strpos($charset, "\\") !== FALSE) $charset = str_replace("\\", '', $charset);
+                if (mb_strpos($charset, '/') !== FALSE) $charset = str_replace('/', '', $charset);
                 
                 $charset = mb_strtolower($charset);
                 $charset = trim($charset);
@@ -1446,6 +921,7 @@ function my_get_charset_from_file_regex($file, $file_info) {
                 if (mb_strpos($charset, '"') !== FALSE) $charset = str_replace('"', '', $charset);
                 if (mb_strpos($charset, "'") !== FALSE) $charset = str_replace("'", '', $charset);
                 if (mb_strpos($charset, "\\") !== FALSE) $charset = str_replace("\\", '', $charset);
+                if (mb_strpos($charset, '/') !== FALSE) $charset = str_replace('/', '', $charset);
                 
                 $charset = mb_strtolower($charset);
                 $charset = trim($charset);
@@ -1453,7 +929,7 @@ function my_get_charset_from_file_regex($file, $file_info) {
             
             $info['charset_file'] = $charset;
             
-            if (my_array_to_file($info, $file_info) === false) $charset = false;
+            if (my_info_to_file_info($info, $file_info) === false) $charset = false;
         }
         else {
             $charset = $info['charset_file'];
@@ -1471,17 +947,13 @@ function my_get_charset_from_file_regex($file, $file_info) {
     return $result;
 }
 
-function my_curl_download_all($parent_id, $start_id, $own_url, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' || 'algorithm' */, $dir_structura, $filename_structura) {
+function my_curl_download_all($parent_id, $start_id, $own_url, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' */, $method_one_dir_string /* '' */, $dir_structura, $filename_structura) {
     
     $download = 0;
     
-    $where['id'] = $start_id;
-    $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
-    
     if (($method === 'one_dir')
      || ($method === 'one_link')
-     || ($method === 'all_from_one_link')
-     || ($method === 'algorithm')) {
+     || ($method === 'all_from_one_link')) {
         
         if ((int)$parent_id === (int)$start_id) $download = 1;
         
@@ -1498,14 +970,22 @@ function my_curl_download_all($parent_id, $start_id, $own_url, $method /* 'one_d
                 $where['id'] = $start_id;
                 $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
                 
-                $where['id'] = $parent_id;
-                $parent_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                if (mb_strlen($method_one_dir_string)) $start_url = $method_one_dir_string;
                 
                 if (mb_substr($start_url, -1) === '/') $start_url = mb_substr($start_url, 0, -1);
                 
                 if (!preg_match('{^([^/]*//)?[^/]+$}', $start_url) && !preg_match('{/[^/\\.]+$}', $start_url)) $start_url = preg_replace('{/[^/]+$}', '', $start_url);
                 
-                if ((mb_stripos($own_url, $start_url) !== false) || (mb_stripos($parent_url, $start_url) !== false)) $download = 1;
+                $pattern_protocol = '{^((https?:)?//)?}i';
+                if (preg_match($pattern_protocol, $start_url)) $start_url = preg_replace($pattern_protocol, '', $start_url);
+                $pattern_protocol = mb_substr($pattern_protocol, 1, -2);
+                
+                $pattern_one_dir = '{' . $pattern_protocol . $start_url . '(/|$)}i';
+                
+                $where['id'] = $parent_id;
+                $parent_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                
+                if (preg_match($pattern_one_dir, $own_url) || preg_match($pattern_one_dir, $parent_url)) $download = 1;
             }
         }
     }
@@ -1513,14 +993,13 @@ function my_curl_download_all($parent_id, $start_id, $own_url, $method /* 'one_d
     return $download;
 }
 
-function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML /* true || false */, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' || 'algorithm' */, $dir_structura, $filename_structura) {
+function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML /* true || false */, $method /* 'one_dir' || 'one_link' || 'all_from_one_link' */, $method_one_dir_string /* '' */, $dir_structura, $filename_structura) {
     
     $download = 1;
     
     if (($method === 'one_dir')
      || ($method === 'one_link')
-     || ($method === 'all_from_one_link')
-     || ($method === 'algorithm')) {
+     || ($method === 'all_from_one_link')) {
         
         if ($only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) $download = 0;
         
@@ -1557,14 +1036,22 @@ function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML
                     $where['id'] = $start_id;
                     $start_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
                     
-                    $where['id'] = $own_id;
-                    $own_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                    if (mb_strlen($method_one_dir_string)) $start_url = $method_one_dir_string;
                     
                     if (mb_substr($start_url, -1) === '/') $start_url = mb_substr($start_url, 0, -1);
                     
                     if (!preg_match('{^([^/]*//)?[^/]+$}', $start_url) && !preg_match('{/[^/\\.]+$}', $start_url)) $start_url = preg_replace('{/[^/]+$}', '', $start_url);
                     
-                    if (mb_stripos($own_url, $start_url) !== false) $download = 1;
+                    $pattern_protocol = '{^((https?:)?//)?}i';
+                    if (preg_match($pattern_protocol, $start_url)) $start_url = preg_replace($pattern_protocol, '', $start_url);
+                    $pattern_protocol = mb_substr($pattern_protocol, 1, -2);
+                    
+                    $pattern_one_dir = '{' . $pattern_protocol . $start_url . '(/|$)}i';
+                    
+                    $where['id'] = $own_id;
+                    $own_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
+                    
+                    if (preg_match($pattern_one_dir, $own_url)) $download = 1;
                     
                     if ($download !== 1) {
                         if (!$only_SGML && ($own_content_type !== 'text/html') && ($own_content_type !== 'text/xml')) {
@@ -1572,7 +1059,7 @@ function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML
                             $where['id'] = $parent_id;
                             $parent_url = my_read_cell_where_file_structura($where, 'url', $dir_structura, $filename_structura);
                             
-                            if (mb_stripos($parent_url, $start_url) !== false) $download = 1;
+                            if (preg_match($pattern_one_dir, $parent_url)) $download = 1;
                         }
                     }
                 }
@@ -1586,13 +1073,12 @@ function my_curl_download_SGML($own_id, $start_id, $own_content_type, $only_SGML
     return $download;
 }
 
-function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_link' || 'algorithm' */, $only_SGML = false, $etalon = true, $link_mode = 'none' /* 'cut' || 'transform' */, $link_transform = '', $proxy = false) {
+function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_link' */, $method_one_dir_string = '', $algorithm = false, $only_SGML = false, $etalon = true, $exclude_string = '', $another = false, $linkmode = 'none' /* 'cut' || 'transform' */, $linkmode_transform_string = '', $proxy = false) {
     
-/* Массив с именем структурированного файла и номером скачанной строки (для режима ALGORITHM) или номером строки равным -1, если работа идет до упора, при ошибке COUNT($RESULT) равно 0 */
-    $result = array( );
+    $result = false;
     
 /**********/
-    $User_Agent = 'User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0';
+    $User_Agent = 'User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:19.0) Gecko/20100101 Firefox/19.0';
     $HTTP_Headers = array   (
                              1 => 'Accept: */*',
                              2 => 'Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
@@ -1662,7 +1148,7 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                         $info = array( );
                         if (mb_strlen($temp_file_info)) {
                             if (isset($_SERVER['COMSPEC'])) $temp_file_info = mb_convert_encoding($temp_file_info, 'windows-1251', 'UTF-8');
-                            if (@file_exists($temp_file_info) && @filesize($temp_file_info)) {
+                            if (@filesize($temp_file_info)) {
                                 if (isset($_SERVER['COMSPEC'])) $temp_file_info = mb_convert_encoding($temp_file_info, 'UTF-8', 'windows-1251');
                                 $info = my_info_array($temp_file_info);
                             }
@@ -1697,7 +1183,7 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                 
                                 if ($task['download']) {
                                     
-                                    $data_rewrite[0]['download'] = my_curl_download_SGML($task['id'], $start_id, $task['content_type'], $only_SGML, $method, $base_dirs['base_dir'], $structura_filename);
+                                    $data_rewrite[0]['download'] = my_curl_download_SGML($task['id'], $start_id, $task['content_type'], $only_SGML, $method, $method_one_dir_string, $base_dirs['base_dir'], $structura_filename);
                                     
                                     if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) {
                                         
@@ -1709,7 +1195,6 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                             
                                             $data_rewrite[0]['curl_mode'] = $dirs_files['curl_mode'];
                                             $data_rewrite[0]['file'] = $dirs_files['site_dir'] . DIRECTORY_SEPARATOR . $dirs_files['filename'];
-                                            if (mb_strlen($dirs_files['site_dir_etalon'])) $data_rewrite[0]['file_etalon'] = $dirs_files['site_dir_etalon'] . DIRECTORY_SEPARATOR . $dirs_files['filename'];
                                             
                                             if ($dirs_files['error']) {
                                                 $data_rewrite[0]['error'] = '***ERROR***';
@@ -1721,11 +1206,12 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                 $task = my_read_row_file_structura($num_row, $base_dirs['base_dir'], $structura_filename);
                                                 
                                                 $files = my_curl_request($task['url'], $User_Agent, $HTTP_Headers, 'normal', array('temp_dir' => '', 'file' => $task['file']), $referer, $task['curl_mode'], 'files', $task['temp_file_info']);
+                                                
                                                 if ($files !== false) {
                                                     
                                                     $data_rewrite[0]['done'] = 1;
                                                     if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) $task = my_read_row_file_structura($num_row, $base_dirs['base_dir'], $structura_filename);
-                                                    
+/* ПРОДОЛЖИТЬ ЗДЕСЬ - Возможно, пересмотреть идеологию постоянного дергания файлов. А что, если в этом месте считать файл в строку, а дальше обрабатывать уже эту строку. Но в данном случае нужно различать, где curl_mode равен b, а где равен t */
                                                     if (($task['content_type'] === 'text/html') || ($task['content_type'] === 'text/xml')) {
                                                         $charset_file = my_get_charset_from_file_regex($files['file'], $files['file_info']);
                                                         $charset = '';
@@ -1735,16 +1221,22 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                         if ((mb_strlen($charset) === 0) && isset($info['charset_header'])) $charset = $info['charset_header'];
                                                         
                                                         $info['charset'] = $charset;
-                                                        if (my_array_to_file($info, $files['file_info'], 'write', 'with_keys', "\t")) $info = my_info_array($files['file_info']);
+                                                        if (my_info_to_file_info($info, $files['file_info'])) $info = my_info_array($files['file_info']);
                                                     }
                                                     
                                                     if (mb_strlen($dirs_files['site_dir_etalon'])) {
+                                                        
+                                                        $data_rewrite[0]['file_etalon'] = $dirs_files['site_dir_etalon'] . DIRECTORY_SEPARATOR . basename($files['file']);
+                                                        
+                                                        if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) $task = my_read_row_file_structura($num_row, $base_dirs['base_dir'], $structura_filename);
+                                                        
                                                         foreach ($files as $file) {
                                                             if (mb_strlen($file)) {
                                                                 if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
                                                                 if (@file_exists($file)) {
                                                                     if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'UTF-8', 'windows-1251');
                                                                     $file_etalon = $dirs_files['site_dir_etalon'] . DIRECTORY_SEPARATOR . basename($file);
+                                                                    
                                                                     if (isset($_SERVER['COMSPEC'])) $file = mb_convert_encoding($file, 'windows-1251', 'UTF-8');
                                                                     if (isset($_SERVER['COMSPEC'])) $file_etalon = mb_convert_encoding($file_etalon, 'windows-1251', 'UTF-8');
                                                                     copy($file, $file_etalon);
@@ -1759,52 +1251,57 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                     }
                                                     
                                                     if ($info['content_type'] === 'text/html') {
-                                                        if (mb_strlen($info['charset'])) {
-                                                            if (my_file_in_utf8_4phpquery_soft_2($files['file'], $info['charset'])) {
+                                                        if (my_file_in_utf8_4phpquery_soft_2($files['file'], $files['file_info'])) {
+                                                            
+                                                            $info = my_info_array($files['file_info']);
+                                                            
+                                                            $meta = array( );
+                                                            
+                                                            if (isset($document)) unset($document);
+                                                            if (isset($_SERVER['COMSPEC'])) $files['file'] = mb_convert_encoding($files['file'], 'windows-1251', 'UTF-8');
+                                                            $document = phpQuery::newDocumentFile($files['file']);
+                                                            if (isset($_SERVER['COMSPEC'])) $files['file'] = mb_convert_encoding($files['file'], 'UTF-8', 'windows-1251');
+                                                            
+                                                            $title = $document->find("title")->text( );
+                                                            if (mb_strlen($title)) {
+                                                                $title = my_string_in_line_2($title);
+                                                                if (mb_strpos($title, "\t") !== FALSE) $title = str_replace("\t", " ", $title);
+                                                                while (mb_strpos($title, '  ') !== FALSE) $title = str_replace('  ', ' ', $title);
                                                                 
-                                                                $meta = array( );
-                                                                
-                                                                if (isset($document)) unset($document);
-                                                                $document = phpQuery::newDocumentFile($files['file']);
-                                                                
-                                                                $title = $document->find("title")->text( );
                                                                 if (mb_strlen($title)) {
-                                                                    $title = my_string_in_line_2($title);
-                                                                    if (mb_strpos($title, "\t") !== FALSE) $title = str_replace("\t", " ", $title);
-                                                                    while (mb_strpos($title, '  ') !== FALSE) $title = str_replace('  ', ' ', $title);
+                                                                    $data_rewrite[0]['title'] = $title;
+                                                                    if (mb_strlen($task['anchor']) === 0) $data_rewrite[0]['anchor'] = $title;
                                                                     
-                                                                    if (mb_strlen($title)) {
-                                                                        $data_rewrite[0]['title'] = $title;
-                                                                        if (mb_strlen($task['anchor']) === 0) $data_rewrite[0]['anchor'] = $title;
+                                                                    if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) $task = my_read_row_file_structura($num_row, $base_dirs['base_dir'], $structura_filename);
+                                                                    
+                                                                    $meta['title'] = $title;
+                                                                }
+                                                            }
+                                                            
+                                                            $description = $document->find("meta[name=description]")->attr("content");
+                                                            if (mb_strlen($description)) {
+                                                                $description = my_string_in_line_2($description);
+                                                                if (mb_strpos($description, "\t") !== FALSE) $description = str_replace("\t", " ", $description);
+                                                                while (mb_strpos($description, '  ') !== FALSE) $description = str_replace('  ', ' ', $description);
+                                                                
+                                                                if (mb_strlen($description)) $meta['description'] = $description;
+                                                            }
+                                                            
+                                                            $keywords = $document->find("meta[name=keywords]")->attr("content");
+                                                            if (mb_strlen($keywords)) {
+                                                                $keywords = my_string_in_line_2($keywords);
+                                                                if (mb_strpos($keywords, "\t") !== FALSE) $keywords = str_replace("\t", " ", $keywords);
+                                                                while (mb_strpos($keywords, '  ') !== FALSE) $keywords = str_replace('  ', ' ', $keywords);
+                                                                
+                                                                if (mb_strlen($keywords)) $meta['keywords'] = $keywords;
+                                                            }
+                                                            
+                                                            if (count($meta)) {
+                                                                $file_meta = $files['file'] . '.meta';
+                                                                if (my_info_to_file_info($meta, $file_meta)) {
+                                                                    if (mb_strlen($dirs_files['site_dir_etalon'])) {
+                                                                        $file_meta_etalon = $dirs_files['site_dir_etalon'] . DIRECTORY_SEPARATOR . basename($file_meta);
                                                                         
-                                                                        if (my_write_file_structura($data_rewrite, $num_row, 'rewrite', $base_dirs['base_dir'], $structura_filename)) $task = my_read_row_file_structura($num_row, $base_dirs['base_dir'], $structura_filename);
-                                                                        
-                                                                        $meta['title'] = $title;
-                                                                    }
-                                                                }
-                                                                
-                                                                $description = $document->find("meta[name=description]")->attr("content");
-                                                                if (mb_strlen($description)) {
-                                                                    $description = my_string_in_line_2($description);
-                                                                    if (mb_strpos($description, "\t") !== FALSE) $description = str_replace("\t", " ", $description);
-                                                                    while (mb_strpos($description, '  ') !== FALSE) $description = str_replace('  ', ' ', $description);
-                                                                    
-                                                                    if (mb_strlen($description)) $meta['description'] = $description;
-                                                                }
-                                                                
-                                                                $keywords = $document->find("meta[name=keywords]")->attr("content");
-                                                                if (mb_strlen($keywords)) {
-                                                                    $keywords = my_string_in_line_2($keywords);
-                                                                    if (mb_strpos($keywords, "\t") !== FALSE) $keywords = str_replace("\t", " ", $keywords);
-                                                                    while (mb_strpos($keywords, '  ') !== FALSE) $keywords = str_replace('  ', ' ', $keywords);
-                                                                    
-                                                                    if (mb_strlen($keywords)) $meta['keywords'] = $keywords;
-                                                                }
-                                                                
-                                                                if (count($meta)) {
-                                                                    $file_meta = $files['file'] . '.meta';
-                                                                    if (mb_strlen($dirs_files['site_dir_etalon'])) $file_meta_etalon = $dirs_files['site_dir_etalon'] . DIRECTORY_SEPARATOR . basename($file_meta);
-                                                                    if (my_array_to_file($meta, $file_meta) && mb_strlen($dirs_files['site_dir_etalon'])) {
                                                                         if (isset($_SERVER['COMSPEC'])) $file_meta = mb_convert_encoding($file_meta, 'windows-1251', 'UTF-8');
                                                                         if (isset($_SERVER['COMSPEC'])) $file_meta_etalon = mb_convert_encoding($file_meta_etalon, 'windows-1251', 'UTF-8');
                                                                         copy($file_meta, $file_meta_etalon);
@@ -1816,11 +1313,41 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                         }
                                                     }
                                                     
-                                                    $urls = my_get_urls_2($files['file'], $info['content_type'], $info['own_url'], $info['base_url']);
+#                                                   $string_before_algorithm = my_file_in_line_2($file, $need_delim = true);
+
+                                                    $urls = my_get_urls_2($files['file'], $files['file_info'], $info['own_url'], $info['base_url'], true, $another);
                                                     
                                                     $already_urls = my_read_col_file_structura('url', $base_dirs['base_dir'], $structura_filename);
                                                     
                                                     $urls = my_urls_array_diff($urls, $already_urls);
+                                                    
+                                                    if ($algorithm && (($info['content_type'] === 'text/html') || ($info['content_type'] === 'text/xml'))) {
+                                                        
+/*#*/                                                   require_once 'myCURL/algorithms/algorithm_3.php';
+                                                        
+                                                        $charset_string = my_get_charset_from_info($info);
+                                                        
+                                                        if (mb_strlen($charset_string)) {
+                                                            
+                                                            $string_before_algorithm = my_file_in_line_2($files['file']);
+                                                            
+                                                            if (mb_strtoupper($charset_string) !== 'UTF-8') $string_before_algorithm = mb_convert_encoding($string_before_algorithm, 'UTF-8', $charset_string);
+/*
+Определение области ссылок для алгоритма - ЛАЖА!!!
+                                                            $file_algorithm = $files['file'] . '.algo';
+                                                            echo PHP_EOL, '<br>', PHP_EOL, $file_algorithm, PHP_EOL, '<br>', PHP_EOL;
+                                                            $f = fopen($file_algorithm, 'wb');
+                                                            fwrite($f, $string_before_algorithm);
+                                                            fclose($f);
+Определение области ссылок для алгоритма
+*/
+/*#*/                                                       $anchors_before_algorithm = my_get_urls_from_string($string_before_algorithm, $info['content_type'], $info['own_url'], $info['base_url'], false, $another);
+                                                            
+/*#*/                                                       $string_after_algorithm = my_curl_method_algorithm($string_before_algorithm);
+                                                            
+/*#*/                                                       $anchors_after_algorithm = my_get_urls_from_string($string_after_algorithm, $info['content_type'], $info['own_url'], $info['base_url'], false, $another);
+                                                        }
+                                                    }
                                                     
                                                     $data_write = array( );
                                                     foreach ($urls as $url => $anchor) {
@@ -1828,7 +1355,19 @@ function my_curl($url, $dir, $method = 'one_dir' /* 'one_link' || 'all_from_one_
                                                         $level = $task['level'] + 1;
                                                         $parent_id = $task['id'];
                                                         
-                                                        $download = my_curl_download_all($parent_id, $start_id, $url, $method, $base_dirs['base_dir'], $structura_filename);
+                                                        $download = my_curl_download_all($parent_id, $start_id, $url, $method, $method_one_dir_string, $base_dirs['base_dir'], $structura_filename);
+                                                        
+                                                        if ($download) {
+                                                            
+                                                            if ($algorithm && isset($anchors_before_algorithm[$url]) && !isset($anchors_after_algorithm[$url])) $download = 0;
+                                                            
+                                                        }
+                                                        
+                                                        if ($download) {
+                                                            
+                                                            if (mb_strlen($exclude_string) && (mb_stripos($url, $exclude_string) !== false)) $download = 0;
+                                                            
+                                                        }
                                                         
                                                         $data_write[ ] = array('id' => $id, 'level' => $level, 'parent' => $parent_id, 'url' => $url, 'download' => $download, 'anchor' => $anchor, 'done' => 0);
                                                     }
